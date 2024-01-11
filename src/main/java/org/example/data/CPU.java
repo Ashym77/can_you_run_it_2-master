@@ -3,8 +3,10 @@ package org.example.data;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import com.sun.management.OperatingSystemMXBean;
 import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.RuntimeMXBean;
+import java.nio.Buffer;
 
 public class CPU {
 	
@@ -63,28 +65,44 @@ public class CPU {
 			  * 
 			  * */
 
-		        Process process = Runtime.getRuntime().exec("wmic cpu get caption, deviceid, name, numberofcores, maxclockspeed, status");
-		        process.waitFor(); 
+		Process process = Runtime.getRuntime().exec("wmic cpu get caption, deviceid, name, numberofcores, maxclockspeed, status");
+		process.waitFor();
 
-		        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-		        String line;
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		String line;
+		int cores = 0;
+		String tempText = "";
 
-				OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+		Process cpuCores = Runtime.getRuntime().exec("wmic cpu get numberofcores");
+		BufferedReader readCPUspecs = new BufferedReader(new InputStreamReader(cpuCores.getInputStream()));
 
-				int availableProcessors = osBean.getAvailableProcessors();
-		        double frequency = 0.0;
-				int cores = 0;
+		while((line = readCPUspecs.readLine()) != null){
+			tempText += line.replaceAll("\\n", "");
+		}
+
+		cores = Integer.parseInt(tempText.replaceAll("[^0-9]", ""));
+
+		Process cpuFrequency = Runtime.getRuntime().exec("wmic cpu get maxclockspeed");
+		readCPUspecs = new BufferedReader(new InputStreamReader(cpuFrequency.getInputStream()));
+
+		tempText = "";
+
+		while ((line = readCPUspecs.readLine()) != null){
+			tempText += line.replaceAll("\\n", "");
+		}
+		double frequency = Double.parseDouble(tempText.replaceAll("[^0-9]", ""));
+		frequency = frequency / 1000;
+
+		// Skip the header line
+		reader.readLine();
 
 
 
-		        // Skip the header line
-		        reader.readLine();
+		while ((line = reader.readLine()) != null) {
+			System.out.println(line);
+		}
 
-		        while ((line = reader.readLine()) != null) {
-		        	System.out.println(line);
-		        }
-
-		        reader.close();
-		        return new CPU(frequency, cores);
+		reader.close();
+		return new CPU(frequency, cores);
 	}
 }
