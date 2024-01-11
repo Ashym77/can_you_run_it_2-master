@@ -18,6 +18,25 @@ public class Programs {
         this.disk = disk;
     }
 
+    public String getName()
+    {
+        return name;
+    }
+
+    public CPU getCpu()
+    {
+        return cpu;
+    }
+
+    public RAM getRam()
+    {
+        return ram;
+    }
+
+    public Disk getDisk()
+    {
+        return disk;
+    }
 
     public static Programs[] createSamplePrograms() {
         Programs[] samplePrograms = new Programs[3];
@@ -38,6 +57,17 @@ public class Programs {
         samplePrograms[2] = new Programs("Program 3", cpu3, ram3, disk3);
 
         return samplePrograms;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Programs{" +
+                "name='" + name + '\'' +
+                ", cpu=" + cpu.toString() +
+                ", ram=" + ram.toString() +
+                ", disk=" + disk.toString() +
+                '}';
     }
 }
 
