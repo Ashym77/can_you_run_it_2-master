@@ -9,11 +9,10 @@ import org.example.data.RAM;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-
 		  try {
 
 	            // Get CPU information
-	            CPU cpu = CPU.getRAMinfo();
+	            CPU cpu = CPU.getCPUinfo();
 
 	            // Get RAM information
 	            RAM ram = RAM.getRAMinfo();

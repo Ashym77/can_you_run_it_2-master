@@ -3,6 +3,10 @@ package org.example.data;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import com.sun.management.OperatingSystemMXBean;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.nio.Buffer;
 
 public class CPU {
 	
@@ -40,9 +44,10 @@ public class CPU {
 
 
 
-	public static CPU getRAMinfo() throws IOException, InterruptedException {
+	public static CPU getCPUinfo() throws IOException, InterruptedException {
 
-			 
+		String cpuCoresCommand = "wmic cpu get numberofcores";
+		String cpuClockCommand = "wmic cpu get maxclockspeed";
 
 			 /*
 			  * Lägg scriptet i exec argumentet för att se cpu info
@@ -60,26 +65,35 @@ public class CPU {
 			  * lscpu
 			  * 
 			  * */
-		String oSystem = System.getProperty("os.name");
-		String[] mainOS = oSystem.split("\\s+");
-		String osFirstWord = mainOS[0];
-		System.out.println(osFirstWord);
 
-
-		Process process = switch (osFirstWord){
-			case "Mac" -> Runtime.getRuntime().exec("sysctl machdep.cpu");
-			case "Windows" -> Runtime.getRuntime().exec("wmic cpu get caption, deviceid, name, numberofcores, maxclockspeed, status");
-			default -> Runtime.getRuntime().exec("lscpu");
-		};
-
-
+		Process process = Runtime.getRuntime().exec(cpuCoresCommand);
 		process.waitFor();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		String line;
+		int cores = 0;
+		String tempText = "";
 
 
-		double frequency = 0.0; int cores = 0;
+		Process cpuCores = Runtime.getRuntime().exec(cpuCoresCommand);
+		BufferedReader readCPUspecs = new BufferedReader(new InputStreamReader(cpuCores.getInputStream()));
+
+		while((line = readCPUspecs.readLine()) != null){
+			tempText += line.replaceAll("\\n", "");
+		}
+
+		cores = Integer.parseInt(tempText.replaceAll("[^0-9]", ""));
+
+		Process cpuFrequency = Runtime.getRuntime().exec(cpuClockCommand);
+		readCPUspecs = new BufferedReader(new InputStreamReader(cpuFrequency.getInputStream()));
+
+		tempText = "";
+
+		while ((line = readCPUspecs.readLine()) != null){
+			tempText += line.replaceAll("\\n", "");
+		}
+		double frequency = Double.parseDouble(tempText.replaceAll("[^0-9]", ""));
+		frequency = frequency / 1000;
 
 		// Skip the header line
 		reader.readLine();
@@ -91,6 +105,4 @@ public class CPU {
 		reader.close();
 		return new CPU(frequency, cores);
 	}
-
-
 }

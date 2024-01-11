@@ -58,6 +58,7 @@ public class Disk {
 				// Adjust the regex to handle variations in spacing
 				String[] columns = line.trim().split("\\s+");
 
+
 				long freeSpace = Long.parseLong(columns[1]);
 				long size = Long.parseLong(columns[2]);
 
