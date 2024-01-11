@@ -38,7 +38,7 @@ public class RAM {
 			  * 
 			  * */
 
-		        Process process = Runtime.getRuntime().exec("sysctl -n hw.memsize | awk '{print $0/1073741824\" GB\"}'");
+		        Process process = Runtime.getRuntime().exec("wmic memorychip get capacity'");
 		        process.waitFor(); 
 
 		        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));

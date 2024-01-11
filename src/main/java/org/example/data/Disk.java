@@ -76,7 +76,7 @@ public class Disk {
 			  * 
 			  * */
 
-		        Process process = Runtime.getRuntime().exec("df -h");
+		        Process process = Runtime.getRuntime().exec("wmic logicaldisk get deviceid, freespace, size, volumename");
 		        process.waitFor(); 
 
 		        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -89,6 +89,16 @@ public class Disk {
 
 		        while ((line = reader.readLine()) != null) {
 		        	System.out.println(line);
+					String[] columns = line.trim().split("\\s+");
+
+					String deviceId = columns[0];
+					long freeSpace = Long.parseLong(columns[1]);
+					long size = Long.parseLong(columns[2]);
+
+					// Accumulate total, used, and free space
+					total += size;
+					used += (size - freeSpace);
+					free += freeSpace;
 		        }
 
 		        reader.close();
