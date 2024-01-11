@@ -61,14 +61,15 @@ public class CPU {
 			  * 
 			  * */
 
-		        Process process = Runtime.getRuntime().exec("sysctl machdep.cpu");
+		        Process process = Runtime.getRuntime().exec("wmic cpu get caption, deviceid, name, numberofcores, maxclockspeed, status");
 		        process.waitFor(); 
 
 		        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		        String line;
 
 		        
-		        double frequency = 0.0; int cores = 0;
+		        double frequency = 0.0;
+				int cores = 0;
 
 		        // Skip the header line
 		        reader.readLine();

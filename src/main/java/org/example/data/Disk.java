@@ -76,7 +76,7 @@ public class Disk {
 			  * 
 			  * */
 
-		        Process process = Runtime.getRuntime().exec("df -h");
+		        Process process = Runtime.getRuntime().exec("wmic logicaldisk get deviceid, freespace, size, volumename");
 		        process.waitFor(); 
 
 		        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
