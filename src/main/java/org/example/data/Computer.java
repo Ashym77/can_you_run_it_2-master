@@ -26,5 +26,14 @@ public class Computer {
     public Disk getDisk() {
         return disk;
     }
+
+    @Override
+    public String toString() {
+        return "Computer{" +
+                "disk=" + disk +
+                ", cpu=" + cpu +
+                ", ram=" + ram +
+                '}';
+    }
 }
 

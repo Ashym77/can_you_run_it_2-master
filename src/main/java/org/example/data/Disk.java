@@ -76,7 +76,8 @@ public class Disk {
 			  * 
 			  * */
 
-		        Process process = Runtime.getRuntime().exec("df -h");
+		        Process process = Runtime.getRuntime().exec("wmic logicaldisk get deviceid, freespace, size, volumename\n" +
+						"\t\t\t  * ");
 		        process.waitFor(); 
 
 		        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -93,5 +94,14 @@ public class Disk {
 
 		        reader.close();
 		        return new Disk(total, used, free);
+	}
+
+	@Override
+	public String toString() {
+		return "Disk{" +
+				"total=" + total +
+				", used=" + used +
+				", free=" + free +
+				'}';
 	}
 }

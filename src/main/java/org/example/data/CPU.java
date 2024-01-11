@@ -61,7 +61,7 @@ public class CPU {
 			  * 
 			  * */
 
-		        Process process = Runtime.getRuntime().exec("sysctl machdep.cpu");
+		        Process process = Runtime.getRuntime().exec("wmic cpu get caption, deviceid, name, numberofcores, maxclockspeed, status");
 		        process.waitFor(); 
 
 		        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -77,9 +77,16 @@ public class CPU {
 		        	System.out.println(line);
 		        }
 
+
 		        reader.close();
 		        return new CPU(frequency, cores);
 	}
 
-
+	@Override
+	public String toString() {
+		return "CPU{" +
+				"frequency=" + frequency +
+				", cores=" + cores +
+				'}';
+	}
 }

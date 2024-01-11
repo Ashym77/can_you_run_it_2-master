@@ -15,13 +15,15 @@ public class Main {
 	            CPU cpu = CPU.getRAMinfo();
 
 	            // Get RAM information
-	            RAM ram = RAM.getRAMinfo();
+			  RAM ram = RAM.getRAMinfo();
 
 	            // Get Disk information
 	            Disk disk = Disk.getDiskInfo();
 
 	            // Create an instance of Computer
 	            Computer myComputer = new Computer(disk, cpu, ram);
+			  System.out.println("min data " +
+					  myComputer);
 
 	            // Access and print information
 	            System.out.println("CPU Frequency: " + myComputer.getCpu().getFrequency() + " GHz, Cores: " + myComputer.getCpu().getCores());
