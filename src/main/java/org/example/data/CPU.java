@@ -44,10 +44,10 @@ public class CPU {
 
 
 
-	public static CPU getCPUinfo() throws IOException, InterruptedException {
+	public static CPU getCPUinfo(String os) throws IOException, InterruptedException {
 
-			 
-
+		String cpuCoresCommand;
+		String CpuClockCommand;
 			 /*
 			  * Lägg scriptet i exec argumentet för att se cpu info
 			  * Ni kan prova dessa i era terminaler
@@ -64,14 +64,19 @@ public class CPU {
 			  * lscpu
 			  * 
 			  * */
-
-		Process process = Runtime.getRuntime().exec("wmic cpu get caption, deviceid, name, numberofcores, maxclockspeed, status");
+		switch (os){
+			case "Windows%" -> {
+				cpuCoresCommand = "wmic cpu get caption, deviceid, name, numberofcores, maxclockspeed, status";
+			}
+		}
+		Process process = Runtime.getRuntime().exec();
 		process.waitFor();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		String line;
 		int cores = 0;
 		String tempText = "";
+
 
 		Process cpuCores = Runtime.getRuntime().exec("wmic cpu get numberofcores");
 		BufferedReader readCPUspecs = new BufferedReader(new InputStreamReader(cpuCores.getInputStream()));
