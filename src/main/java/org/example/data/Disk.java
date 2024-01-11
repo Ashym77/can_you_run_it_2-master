@@ -87,19 +87,24 @@ public class Disk {
 		        // Skip the header line
 		        reader.readLine();
 
-		        while ((line = reader.readLine()) != null) {
-		        	System.out.println(line);
+			while ((line = reader.readLine()) != null) {
+
+				if (line.trim().matches("[A-Z]:.*")) {
 					String[] columns = line.trim().split("\\s+");
 
-					String deviceId = columns[0];
 					long freeSpace = Long.parseLong(columns[1]);
 					long size = Long.parseLong(columns[2]);
 
 					// Accumulate total, used, and free space
-					total += size;
-					used += (size - freeSpace);
-					free += freeSpace;
-		        }
+					total = (int) (size /1000000);
+					used = (int) (size - free) /1000000;
+					free = (int) freeSpace / 1000000;
+				}
+			}
+
+				System.out.println("Total Space: " + total);
+				System.out.println("Used Space: " + used);
+				System.out.println("Free Space: " + free);
 
 		        reader.close();
 		        return new Disk(total, used, free);
