@@ -6,107 +6,84 @@ import java.io.InputStreamReader;
 
 public class Disk {
 
-	private int total;
-	private int used;
-	private int free;
-	
-	public Disk(int total, int used, int free) {
+	private double total;
+	private double used;
+	private double free;
+
+	public Disk(double total, double used, double free) {
 		this.total = total;
 		this.used = used;
 		this.free = free;
 	}
-	
-	
-	
-	public int getTotal() {
+
+	public double getTotal() {
 		return total;
 	}
 
-
-
-	public void setTotal(int total) {
+	public void setTotal(double total) {
 		this.total = total;
 	}
 
-
-
-	public int getUsed() {
+	public double getUsed() {
 		return used;
 	}
 
-
-
-	public void setUsed(int used) {
+	public void setUsed(double used) {
 		this.used = used;
 	}
 
-
-
-	public int getFree() {
+	public double getFree() {
 		return free;
 	}
 
-
-
-	public void setFree(int free) {
+	public void setFree(double free) {
 		this.free = free;
 	}
 
+	public static Disk getDiskInfo() throws IOException, InterruptedException {
 
+		Process process = Runtime.getRuntime().exec("wmic logicaldisk get deviceid, freespace, size, volumename");
+		process.waitFor();
 
-		public static Disk getDiskInfo() throws IOException, InterruptedException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		String line;
 
-			 
+		double free = 0, used = 0, total = 0;
 
-			 /*
-			  * Lägg scriptet i exec argumentet för att se disk info.
-			  *  
-			  * 
-			  * Ni kan prova dessa i era terminaler		  * 
-			  * Sök gärna upp om de kanske finns något annat script ni kan nytja.
-			  * cmd(windows) terminal(mac) 
-			  * 
-			  * Windows
-			  * wmic logicaldisk get deviceid, freespace, size, volumename
-			  * 
-			  * 
-			  * Mac/linux
-			  * df -h
-			  * 
-			  * 
-			  * */
+		// Skip the header line
+		reader.readLine();
 
-		        Process process = Runtime.getRuntime().exec("wmic logicaldisk get deviceid, freespace, size, volumename");
-		        process.waitFor(); 
+		while ((line = reader.readLine()) != null) {
+			if (line.trim().matches("[A-Z]:.*")) {
+				// Adjust the regex to handle variations in spacing
+				String[] columns = line.trim().split("\\s+");
 
-		        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-		        String line;
+				long freeSpace = Long.parseLong(columns[1]);
+				long size = Long.parseLong(columns[2]);
 
-		        int free = 0, used = 0, total = 0;
-
-		        // Skip the header line
-		        reader.readLine();
-
-			while ((line = reader.readLine()) != null) {
-
-				if (line.trim().matches("[A-Z]:.*")) {
-					String[] columns = line.trim().split("\\s+");
-
-					long freeSpace = Long.parseLong(columns[1]);
-					long size = Long.parseLong(columns[2]);
-
-					// Accumulate total, used, and free space
-					total = (int) (size /1000000);
-					used = (int) (size - free) /1000000;
-					free = (int) freeSpace / 1000000;
-				}
+				// Accumulate total, used, and free space as doubles
+				total += Math.round((size / 1000000000.0) * 100.0 ) / 100.0;
+				used += Math.round(((size - freeSpace) / 1000000000.0) * 100.0) / 100.0;
+				free += Math.round((freeSpace / 1000000000.0) * 100.0) / 100.0;
 			}
+		}
 
-				System.out.println("Total Space: " + total);
-				System.out.println("Used Space: " + used);
-				System.out.println("Free Space: " + free);
+		//total = Math.round(total * 100.0) / 100.0;
 
-		        reader.close();
-		        return new Disk(total, used, free);
+		System.out.println("Total Space: " + total);
+		System.out.println("Used Space: " + used);
+		System.out.println("Free Space: " + free);
+
+		reader.close();
+		return new Disk(total, used, free);
+	}
+
+	public static void main(String[] args) {
+		try {
+			Disk diskInfo = getDiskInfo();
+			// You can access the values as doubles here
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }
