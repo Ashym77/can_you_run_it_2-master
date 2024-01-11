@@ -44,10 +44,11 @@ public class CPU {
 
 
 
-	public static CPU getCPUinfo(String os) throws IOException, InterruptedException {
+	public static CPU getCPUinfo() throws IOException, InterruptedException {
 
-		String cpuCoresCommand;
-		String CpuClockCommand;
+		String cpuCoresCommand = "wmic cpu get numberofcores";
+		String cpuClockCommand = "wmic cpu get maxclockspeed";
+
 			 /*
 			  * Lägg scriptet i exec argumentet för att se cpu info
 			  * Ni kan prova dessa i era terminaler
@@ -64,12 +65,8 @@ public class CPU {
 			  * lscpu
 			  * 
 			  * */
-		switch (os){
-			case "Windows%" -> {
-				cpuCoresCommand = "wmic cpu get caption, deviceid, name, numberofcores, maxclockspeed, status";
-			}
-		}
-		Process process = Runtime.getRuntime().exec();
+
+		Process process = Runtime.getRuntime().exec(cpuCoresCommand);
 		process.waitFor();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -78,7 +75,7 @@ public class CPU {
 		String tempText = "";
 
 
-		Process cpuCores = Runtime.getRuntime().exec("wmic cpu get numberofcores");
+		Process cpuCores = Runtime.getRuntime().exec(cpuCoresCommand);
 		BufferedReader readCPUspecs = new BufferedReader(new InputStreamReader(cpuCores.getInputStream()));
 
 		while((line = readCPUspecs.readLine()) != null){
@@ -87,7 +84,7 @@ public class CPU {
 
 		cores = Integer.parseInt(tempText.replaceAll("[^0-9]", ""));
 
-		Process cpuFrequency = Runtime.getRuntime().exec("wmic cpu get maxclockspeed");
+		Process cpuFrequency = Runtime.getRuntime().exec(cpuClockCommand);
 		readCPUspecs = new BufferedReader(new InputStreamReader(cpuFrequency.getInputStream()));
 
 		tempText = "";
