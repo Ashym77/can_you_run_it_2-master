@@ -60,25 +60,34 @@ public class CPU {
 			  * lscpu
 			  * 
 			  * */
+		String oSystem = System.getProperty("os.name");
+		String[] mainOS = oSystem.split("\\s+");
+		String osFirstWord = mainOS[0];
+		System.out.println(osFirstWord);
 
-		        Process process = Runtime.getRuntime().exec("sysctl machdep.cpu");
-		        process.waitFor(); 
+		Process process = switch (osFirstWord){
+			case "Mac" -> Runtime.getRuntime().exec("sysctl machdep.cpu");
+			case "Windows" -> Runtime.getRuntime().exec("wmic cpu get caption, deviceid, name, numberofcores, maxclockspeed, status");
+			default -> Runtime.getRuntime().exec("lscpu");
+		};
 
-		        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-		        String line;
+		process.waitFor();
 
-		        
-		        double frequency = 0.0; int cores = 0;
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		String line;
 
-		        // Skip the header line
-		        reader.readLine();
 
-		        while ((line = reader.readLine()) != null) {
-		        	System.out.println(line);
-		        }
+		double frequency = 0.0; int cores = 0;
 
-		        reader.close();
-		        return new CPU(frequency, cores);
+		// Skip the header line
+		reader.readLine();
+
+		while ((line = reader.readLine()) != null) {
+			System.out.println(line);
+		}
+
+		reader.close();
+		return new CPU(frequency, cores);
 	}
 
 
