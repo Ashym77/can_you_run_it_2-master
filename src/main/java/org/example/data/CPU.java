@@ -3,6 +3,8 @@ package org.example.data;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 
 public class CPU {
 	
@@ -40,7 +42,7 @@ public class CPU {
 
 
 
-	public static CPU getRAMinfo() throws IOException, InterruptedException {
+	public static CPU getCPUinfo() throws IOException, InterruptedException {
 
 			 
 
@@ -67,9 +69,13 @@ public class CPU {
 		        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		        String line;
 
-		        
+				OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+
+				int availableProcessors = osBean.getAvailableProcessors();
 		        double frequency = 0.0;
 				int cores = 0;
+
+
 
 		        // Skip the header line
 		        reader.readLine();
@@ -81,6 +87,4 @@ public class CPU {
 		        reader.close();
 		        return new CPU(frequency, cores);
 	}
-
-
 }

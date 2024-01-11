@@ -12,7 +12,7 @@ public class Main {
 
 		  try {
 	            // Get CPU information
-	            CPU cpu = CPU.getRAMinfo();
+	            CPU cpu = CPU.getCPUinfo();
 
 	            // Get RAM information
 	            RAM ram = RAM.getRAMinfo();
